@@ -4,8 +4,12 @@ const path = require('node:path');
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const { token } = require('./config.json');
 
+// Define bot logo
+global.botLogo = 'https://i.imgur.com/vqyKOkZ.png';
+global.embedFooterText = 'Heartbotter2 by noahjs#0725';
+
 // New client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+global.client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 // Add commands
 client.commands = new Collection();
@@ -23,7 +27,8 @@ for (const file of commandFiles) {
 
 // Log when online
 client.once('ready', () => {
-    console.log('Online');
+    Tags.sync();
+    console.log(`Online as ${client.user.tag}`);
 });
 
 client.on('interactionCreate', async interaction => {

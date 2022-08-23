@@ -6,6 +6,7 @@ module.exports = {
         .setDescription('Pong! Discord API response time.')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     async execute(interaction) {
-        await interaction.reply('Pong!');
+        const delay = await Math.abs(Date.now() - interaction.createdTimestamp);
+        interaction.reply(`:ping_pong: Pong! Latency is **${delay}ms**. API Latency is **${Math.round(client.ws.ping)}ms**`);
     },
 };
