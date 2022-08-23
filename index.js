@@ -27,7 +27,8 @@ for (const file of commandFiles) {
 
 // Log when online
 client.once('ready', () => {
-    console.log('Online');
+    Tags.sync();
+    console.log(`Online as ${client.user.tag}`);
 });
 
 client.on('interactionCreate', async interaction => {

@@ -2,3 +2,5 @@
 config.json
 
 *.bak
+
+database.sqlite
