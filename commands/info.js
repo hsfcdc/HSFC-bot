@@ -24,12 +24,11 @@ module.exports = {
         if (interaction.commandName === 'info') {
             // User code
             if (interaction.options.getSubcommand() === 'user') {
-                const user = interaction.options.getUser('target');
+                const user = interaction.options.getUser('target') || interaction.user;
 
-                // If user was mentioned
                 if (user) {
-                    const user = interaction.options.getUser('target');
-                    const member = interaction.options.getMember('target');
+
+                    const member = interaction.options.getMember('target') || interaction.member;
                     let createdAt = moment(user.createdAt);
                     let creationDateFormated = createdAt.format('DD/MM/YYYY') + ' (' + createdAt.fromNow() + ')';
                     let joinedAt = moment(member.joinedAt);
@@ -67,7 +66,7 @@ module.exports = {
                                 .addFields({ name: 'Roles', value: roleList, inline: false })
                                 .setImage(user.bannerURL())
                                 .setTimestamp()
-                                .setFooter({ text: 'Heartbotter2 by noahjs#0725', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+                                .setFooter({ text: embedFooterText, iconURL: botLogo });
 
                             interaction.reply({ embeds: [userInfoEmbed] })
                         })
@@ -77,19 +76,22 @@ module.exports = {
                 }
                 // Server code
             } else if (interaction.options.getSubcommand() === 'server') {
+                interaction.guild.fetch()
                 interaction.guild.fetchVanityData()
                     .then(data => {
+                        let serverCreatedAt = moment(interaction.guild.createdAt);
+                        let serverDateFormated = serverCreatedAt.format('DD/MM/YYYY') + ' (' + serverCreatedAt.fromNow() + ')';
                         // vanityEmbed
                         const vanityEmbed = new EmbedBuilder()
                             .setColor('#a4a3eb')
                             .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL() })
                             .setDescription(interaction.guild.description)
                             .setThumbnail(interaction.guild.iconURL())
-                            .addFields({ name: 'Owner', value: `${owner}`, inline: true })
-                            .addFields({ name: 'Creation', value: `${dateFormated}`, inline: true })
+                            .addFields({ name: 'Owner', value: `<@${interaction.guild.ownerId}>`, inline: true })
+                            .addFields({ name: 'Creation', value: `${serverDateFormated}`, inline: true })
                             .addFields({
                                 name: 'Vanity URL',
-                                value: `/${data.code} with ${data.uses} uses.`,
+                                value: `/${interaction.guild.vanityURLCode} with ${interaction.guild.vanityURLUses} uses.`,
                                 inline: true
                             })
                             .addFields({ name: 'Members', value: `${interaction.guild.memberCount}`, inline: true })
@@ -97,7 +99,7 @@ module.exports = {
                             .addFields({ name: 'Channels', value: `${interaction.guild.channels.cache.size}`, inline: true })
                             .setImage(interaction.guild.bannerURL())
                             .setTimestamp()
-                            .setFooter({ text: 'Heartbotter2 by noahjs#0725', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+                            .setFooter({ text: embedFooterText, iconURL: botLogo });
                         // Send vanityEmbed
                         interaction.reply({ embeds: [vanityEmbed] });
                     })

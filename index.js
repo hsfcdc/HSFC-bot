@@ -4,6 +4,10 @@ const path = require('node:path');
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const { token } = require('./config.json');
 
+// Define bot logo
+global.botLogo = 'https://i.imgur.com/vqyKOkZ.png';
+global.embedFooterText = 'Heartbotter2 by noahjs#0725';
+
 // New client instance
 global.client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
