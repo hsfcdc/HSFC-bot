@@ -6,6 +6,7 @@ const moment = require('moment');
 // Export command data
 module.exports = {
     data: new SlashCommandBuilder()
+        .setDMPermission(false)
         .setName('info')
         .setDescription('Pong! Discord API response time.')
         // User subcommand

@@ -2,6 +2,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
+        .setDMPermission(false)
         .setName('ping')
         .setDescription('Pong! Discord API response time.')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),

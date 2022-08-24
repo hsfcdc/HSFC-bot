@@ -4,3 +4,7 @@ config.json
 *.bak
 
 database.sqlite
+
+Functions/
+
+infractions.sqlite
