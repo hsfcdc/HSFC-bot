@@ -8,3 +8,5 @@ database.sqlite
 Functions/
 
 infractions.sqlite
+
+*.sqlite
