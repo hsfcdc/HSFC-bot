@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
+        .setDMPermission(false)
         .setName('ping')
         .setDescription('Pong! Discord API response time.'),
     async execute(interaction) {

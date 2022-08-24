@@ -1,12 +1,15 @@
 // Requirements
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
-const { token } = require('./config.json');
+const { Client, GatewayIntentBits, Collection, ActivityType } = require('discord.js');
+const { token, mongooseLogin } = require('./config.json');
+const mongoose = require('mongoose');
+global.reportFilesChannel = ("936604221464281149")
+global.logChannel = ("974067076819988500")
 
 // Define bot logo
 global.botLogo = 'https://i.imgur.com/vqyKOkZ.png';
-global.embedFooterText = 'Heartbotter2 by noahjs#0725';
+global.embedFooterText = 'Heartbotter2 - discord.gg/heartstopper';
 
 // New client instance
 global.client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -26,9 +29,24 @@ for (const file of commandFiles) {
 
 
 // Log when online
-client.once('ready', () => {
+client.once('ready', async() => {
+    console.log(`✅ Online as ${client.user.tag} 🍂`);
+
+    client.user.setPresence({
+        activities: [{ name: `discord.gg/heartstopper`, type: ActivityType.Watching }],
+        status: 'dnd',
+    });
+
+    if (!mongooseLogin) return;
+    await mongoose.connect(mongooseLogin, {
+        keepAlive: true,
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    }).then(() => { console.log('✅ Client has successfully connected to MongoDB') }).catch((error) => {
+        console.log(error)
+    });
+
     Tags.sync();
-    console.log(`Online as ${client.user.tag}`);
 });
 
 client.on('interactionCreate', async interaction => {
@@ -45,6 +63,8 @@ client.on('interactionCreate', async interaction => {
     }
 
 });
+
+
 
 // Login from config.json
 client.login(token);

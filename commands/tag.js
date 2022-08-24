@@ -25,6 +25,7 @@ global.Tags = sequelize.define('tags', {
 
 module.exports = {
     data: new SlashCommandBuilder()
+        .setDMPermission(false)
         .setName('tag')
         .setDescription('Quickly create or send custom messages.')
         .addSubcommand(subcommand =>
