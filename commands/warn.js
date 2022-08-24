@@ -174,9 +174,7 @@ module.exports = {
                                                     .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
                                                     .setDescription(`${data.WarnData.map(
                                         (w, i) => `**ID**: ${i + 1}\n**By**:${w.ExecutorTag}\n**Date**:${w.Date}\n**Reason**: ${w.Reason}\n\n`
-
-                                        
-                                    ).join(' ')}`)]})} else {
+                                    ).join(' ')}`)], ephemeral: true})} else {
                                         interaction.reply({
                                             embeds: [new EmbedBuilder()
                                                 .setTimestamp()
@@ -184,7 +182,7 @@ module.exports = {
                                                 .setColor('#f0c499')
                                                 .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
                                                 .setDescription(`ℹ️ This user has no warnings! 🍂`)
-                                    ]})}
+                                    ], ephemeral: true})}
 
 
                 }
