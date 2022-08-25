@@ -79,7 +79,7 @@ module.exports = {
             data.save()
         })
 
-        Target.ban({ days: Amount, reason: Reason })
+        Target.kick({ reason: Reason })
             .catch((error) => { console.log(error) })
 
         kickEmbed2.setColor('#F18A8A')
