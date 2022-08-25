@@ -88,12 +88,12 @@ module.exports = {
 
 
                 if (Target.id === member.id) {
-                    banEmbed.setDescription("⛔ You cannot warn yourself! 🍂")
+                    errorEmbed.setDescription("⛔ You cannot warn yourself! 🍂")
                     return interaction.reply({ embeds: [errorEmbed] });
                 }
 
                 if (Target.roles.highest.position >= member.roles.highest.position) {
-                    banEmbed.setDescription("⛔ You cannot warn someone higher than you on the role hierarchy! 🍂")
+                    errorEmbed.setDescription("⛔ You cannot warn someone higher than you on the role hierarchy! 🍂")
                     return interaction.reply({ embeds: [errorEmbed] });
                 }
 
