@@ -21,7 +21,7 @@ module.exports = {
 
     async execute(interaction) {
         const { guild, user, member, options } = interaction;
-        const Target = options.getMember("user");
+        const Target = options.getUser("user");
         const choice = options.getString("check");
 
         const Response = new EmbedBuilder()
