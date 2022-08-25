@@ -46,7 +46,6 @@ client.once('ready', async() => {
         console.log(error)
     });
 
-    Tags.sync();
 });
 
 client.on('interactionCreate', async interaction => {
