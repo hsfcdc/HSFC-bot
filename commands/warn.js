@@ -92,7 +92,7 @@ module.exports = {
                     return interaction.reply({ embeds: [errorEmbed] });
                 }
 
-                if (Target.roles.highest.position > member.roles.highest.position) {
+                if (Target.roles.highest.position >= member.roles.highest.position) {
                     banEmbed.setDescription("⛔ You cannot warn someone higher than you on the role hierarchy! 🍂")
                     return interaction.reply({ embeds: [errorEmbed] });
                 }
