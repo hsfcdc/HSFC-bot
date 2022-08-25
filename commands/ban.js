@@ -94,6 +94,7 @@ module.exports = {
             .catch((error) => { console.log(error) })
 
         banEmbed2.setColor('#F18A8A')
+        banEmbed2.setAuthor({ name: `BAN | ${Target.user.tag}`, iconURL: interaction.guild.iconURL() })
         banEmbed2.addFields({ name: 'User', value: `${Target}`, inline: true })
         banEmbed2.addFields({ name: 'Moderator', value: interaction.user.tag, inline: true })
         banEmbed2.addFields({ name: 'Reason', value: `${Reason}`, inline: true })
