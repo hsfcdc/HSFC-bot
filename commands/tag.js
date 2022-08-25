@@ -1,27 +1,8 @@
 const { SlashCommandBuilder, GatewayIntentBits, PermissionFlagsBits } = require('discord.js');
-const Sequelize = require('sequelize');
+const db = require("../Models/TagDB.js")
+const { templateEmbedResponse } = require("../Import/embedTemplate.js")
 
-const sequelize = new Sequelize('database', 'user', 'password', {
-    host: 'localhost',
-    dialect: 'sqlite',
-    logging: false,
-    // SQLite only
-    storage: 'database.sqlite',
-});
 
-global.Tags = sequelize.define('tags', {
-    name: {
-        type: Sequelize.STRING,
-        unique: true,
-    },
-    description: Sequelize.TEXT,
-    username: Sequelize.STRING,
-    usage_count: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-        allowNull: false,
-    },
-});
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -83,57 +64,80 @@ module.exports = {
         const tagMentions = interaction.options.getUser('user');
         // Add tag command
         if (interaction.options.getSubcommand() === 'add') {
-            try {
-                const tag = await Tags.create({
-                    name: tagName,
-                    description: tagDescription,
-                    username: interaction.user.username,
-                });
-
-                return interaction.reply(`Tag ${tag.name} created successfully.`)
-            } catch (error) {
-                if (error.name === 'SequelizeUniqueConstraintError') {
-                    return interaction.reply(':x: Error! That tag already exists.')
+            db.findOne({ TagName: tagName }, async(error, data) => {
+                if (error) throw error;
+                if (!data) {
+                    data = new db({
+                        TagName: tagName,
+                        TagContent: tagDescription,
+                        TagCreator: interaction.user,
+                    })
+                } else {
+                    return interaction.reply(`This tag already exists!`)
                 }
+                data.save()
+                return interaction.reply(`Tag ${tagName} created successfully.`)
+            })
 
-                return interaction.reply('Something went wrong. Please try again later.')
+        }
 
-            }
-            // Send command tag
-        } else if (interaction.options.getSubcommand() === 'send') {
-            const tag = await Tags.findOne({ where: { name: tagName } });
 
-            if (tag) {
-                tag.increment('usage_count');
-                if (tagMentions) {
-                    return interaction.reply(`${tagMentions}` + " " + tag.get('description'));
+
+        // Send command tag
+        else if (interaction.options.getSubcommand() === 'send') {
+            db.findOne({ TagName: tagName }, async(error, data) => {
+                if (error) throw error;
+                if (data) {
+                    if (tagMentions) {
+                        interaction.reply(`${tagMentions} ` + data.TagContent)
+                    } else {
+                        interaction.reply(`${data.TagContent}`)
+                    }
+
+
+                } else {
+                    interaction.reply(`${tagName} does not exist. 🍂`)
                 }
-                return interaction.reply(tag.get('description'));
+            });
 
-            }
-
-            return interaction.reply(`Could not find a tag named ${tagName}`)
         }
         if (interaction.options.getSubcommand() === 'edit') {
-            const editedRows = await Tags.update({ description: tagDescription }, { where: { name: tagName } });
+            let name = { TagName: tagName }
+            let desc = { TagContent: tagDescription }
+            db.findOneAndUpdate(name, desc, { returnOriginal: false }, async(error, data) => {
+                if (error) throw error;
+                if (data) {
+                    return interaction.reply(`${tagName} was edited successfully! 🍂`)
+                } else {
+                    return interaction.reply(`Could not find a tag with name ${tagName}. 🍂`);
+                }
+            })
 
-            if (editedRows > 0) {
-                return interaction.reply(`Tag ${tagName} was edited successfully.`);
-            }
-            return interaction.reply(`Could not find a tag with name ${tagName}.`);
+
+
+
         }
         if (interaction.options.getSubcommand() === 'list') {
-            const listTag = await Tags.findAll({ attribute: ['name'] });
-            const tagsString = listTag.map(t => t.name).join(', ') || 'No tags set.';
-            return interaction.reply(`**Tags**:\n${tagsString}`);
+            db.find({}, function(error, tag) {
+                // console.log(tag)
+                const tagsString = tag.map(t => t.TagName).join(', ') || 'No tags set.';
+                // console.log(tagsString)
+                return interaction.reply(`**Tags**:\n${tagsString}`);
+            });
+            // console.log(listTag)
+            // const tagsString = listTag.map(t => t.name).join(', ') || 'No tags set.';
+            // return interaction.reply(`**Tags**:\n${tagsString}`);
         }
         if (interaction.options.getSubcommand() === 'delete') {
-            const tagName = interaction.options.getString('name');
-            const rowCount = await Tags.destroy({ where: { name: tagName } });
-
-            if (!rowCount) return interaction.reply('That tag doesn\'t exist.');
-
-            return interaction.reply('Tag deleted.');
+            db.findOneAndDelete(tagName, async(error, data) => {
+                if (error) throw error;
+                if (data) {
+                    return interaction.reply(`${tagName} was edited successfully! 🍂`)
+                } else {
+                    return interaction.reply(`Could not find a tag with name ${tagName}. 🍂`);
+                }
+            })
         }
+
     }
 }

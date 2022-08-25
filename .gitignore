@@ -10,3 +10,5 @@ Functions/
 infractions.sqlite
 
 *.sqlite
+
+Import/logging.js

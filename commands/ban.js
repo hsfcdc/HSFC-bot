@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, GatewayIntentBits, PermissionFlagsBits, EmbedBuilder } = require("discord.js")
 const db = require("../Models/WarningDB.js")
-const { banLog } = require('../Functions/logging.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
