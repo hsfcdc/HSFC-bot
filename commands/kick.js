@@ -21,20 +21,20 @@ module.exports = {
         const Reason = interaction.options.getString("reason") || "N/A";
 
         const kickEmbed = new EmbedBuilder()
-            .setColor('#F18A8A')
+            .setColor('#b1ee9e')
             .setAuthor({ name: 'KICK', iconURL: interaction.guild.iconURL() })
             .setTimestamp()
             .setFooter({ text: embedFooterText, iconURL: botLogo });
 
         const dmEmbed = new EmbedBuilder()
-            .setColor('#F18A8A')
+            .setColor('#b1ee9e')
             .setAuthor({ name: 'KICK', iconURL: interaction.guild.iconURL() })
             .setDescription(`❗ You have been kicked from ${guild.name}! Reason: \`${Reason}\``)
             .setTimestamp()
             .setFooter({ text: embedFooterText, iconURL: botLogo });
 
         const kickEmbed2 = new EmbedBuilder()
-            .setColor('#F18A8A')
+            .setColor('#b1ee9e')
             .setAuthor({ name: 'KICK', iconURL: interaction.guild.iconURL() })
             .setTimestamp()
             .setFooter({ text: embedFooterText, iconURL: botLogo });
@@ -50,7 +50,7 @@ module.exports = {
         }
 
         Target.send({ embeds: [dmEmbed] })
-        kickEmbed.setDescription(`${Target} has been banned for: \`${Reason}\`🍂`)
+        kickEmbed.setDescription(`${Target} has been kicked for: \`${Reason}\`🍂`)
         await interaction.reply({ embeds: [kickEmbed] })
 
         db.findOne({ GuildID: interaction.guildId, UserID: Target.id, UserTag: Target.user.tag }, async(error, data) => {
@@ -82,7 +82,7 @@ module.exports = {
         Target.kick({ reason: Reason })
             .catch((error) => { console.log(error) })
 
-        kickEmbed2.setColor('#F18A8A')
+        kickEmbed2.setColor('#b1ee9e')
         kickEmbed2.addFields({ name: 'User', value: `${Target}`, inline: true })
         kickEmbed2.addFields({ name: 'Moderator', value: interaction.user.tag, inline: true })
         kickEmbed2.addFields({ name: 'Reason', value: `${Reason}`, inline: true })
