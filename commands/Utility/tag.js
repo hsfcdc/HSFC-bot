@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, GatewayIntentBits, PermissionFlagsBits } = require('discord.js');
-const db = require("../Models/TagDB.js")
-const { templateEmbedResponse } = require("../Import/embedTemplate.js")
+const db = require("../../Models/TagDB.js")
+const { templateEmbedResponse } = require("../../Import/embedTemplate.js")
 
 
 
