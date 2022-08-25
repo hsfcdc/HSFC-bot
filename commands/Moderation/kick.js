@@ -55,7 +55,7 @@ module.exports = {
 
         db.findOne({ GuildID: interaction.guildId, UserID: Target.id, UserTag: Target.user.tag }, async(error, data) => {
             if (error) throw error;
-            if (!data || !data.kickData) {
+            if (!data) {
                 data = new db({
                     GuildID: interaction.guildId,
                     UserID: Target.id,
