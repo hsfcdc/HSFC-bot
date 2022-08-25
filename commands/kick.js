@@ -83,7 +83,7 @@ module.exports = {
             .catch((error) => { console.log(error) })
 
         kickEmbed2.setColor('#b1ee9e')
-        logEmbed.setAuthor({ name: `KICK | ${Target.user.tag}`, iconURL: interaction.guild.iconURL() })
+        kickEmbed2.setAuthor({ name: `KICK | ${Target.user.tag}`, iconURL: interaction.guild.iconURL() })
         kickEmbed2.addFields({ name: 'User', value: `${Target}`, inline: true })
         kickEmbed2.addFields({ name: 'Moderator', value: interaction.user.tag, inline: true })
         kickEmbed2.addFields({ name: 'Reason', value: `${Reason}`, inline: true })
