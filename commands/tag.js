@@ -132,7 +132,7 @@ module.exports = {
             db.findOneAndDelete(tagName, async(error, data) => {
                 if (error) throw error;
                 if (data) {
-                    return interaction.reply(`${tagName} was edited successfully! 🍂`)
+                    return interaction.reply(`${tagName} was deleted successfully! 🍂`)
                 } else {
                     return interaction.reply(`Could not find a tag with name ${tagName}. 🍂`);
                 }
