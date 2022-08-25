@@ -127,6 +127,25 @@ module.exports = {
                     if (data.WarnData.length >= 3) {
                         Target.ban({ reason: `3rd warning reached! Final warning: \`${Reason}\`` }).catch(() => {
                             errorEmbed.setDescription(`⛔ **${Target}** has reached 3 strikes, but I was unable to ban them! 🍂`);
+                            return guild.channels.cache.get(interaction.channelId).send({ embeds: [errorEmbed] })
+                        })
+                        logEmbed.setColor('#F18A8A')
+                        logEmbed.setAuthor({ name: `BAN | ${Target.user.tag}`, iconURL: interaction.guild.iconURL() })
+                        logEmbed.addFields({ name: 'User', value: `${Target}`, inline: true })
+                        logEmbed.addFields({ name: 'Moderator', value: interaction.user.tag, inline: true })
+                        logEmbed.addFields({ name: 'Reason', value: `3rd warning reached! Final warning: \`${Reason}\``, inline: true })
+                        guild.channels.cache.get(reportFilesChannel).send({ embeds: [logEmbed] })
+                        guild.channels.cache.get(logChannel).send({ embeds: [logEmbed] })
+                        Target.send({
+                            embeds: [new EmbedBuilder()
+                                .setColor('#f0c499')
+                                .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
+                                .setDescription(`❗You have been banned from ${guild.name}! \n**Reason**: 3 strikes auto-ban`)
+                                .setTimestamp()
+                                .setFooter({ text: embedFooterText, iconURL: botLogo })
+                            ]
+                        }).catch(() => {
+                            errorEmbed.setDescription(`⛔ I was unable to message **${Target}** about their 3-strikes ban! 🍂`);
                             guild.channels.cache.get(interaction.channelId).send({ embeds: [errorEmbed] })
                         })
 
