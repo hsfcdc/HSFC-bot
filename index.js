@@ -16,14 +16,26 @@ global.client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 // Add commands
 client.commands = new Collection();
+// const commandsPath = path.join(__dirname, 'commands');
+// const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+
+// for (const file of commandFiles) {
+//     const filePath = path.join(commandsPath, file);
+//     const command = require(filePath)
+
+//     client.commands.set(command.data.name, command);
+// }
+
 const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+const commandFolders = fs.readdirSync(commandsPath);
 
-for (const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
-    const command = require(filePath)
-
-    client.commands.set(command.data.name, command);
+for (const folder of commandFolders) {
+    const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
+    for (const file of commandFiles) {
+        const filePath = path.join(commandsPath, folder, file);
+        const command = require(filePath);
+        client.commands.set(command.data.name, command);
+    }
 }
 
 
