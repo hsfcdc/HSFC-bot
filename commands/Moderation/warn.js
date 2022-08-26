@@ -125,99 +125,108 @@ module.exports = {
                     }
 
                     data.save()
-                })
-                if (data.WarnData.length >= 3) {
-                    Target.ban({ reason: `3rd warning reached! Final warning: \`${Reason}\`` }).catch(() => {
-                        errorEmbed.setDescription(`⛔ **${Target}** has reached 3 strikes, but I was unable to ban them! 🍂`);
-                        return guild.channels.cache.get(interaction.channelId).send({ embeds: [errorEmbed] })
-                    })
+                    if (data.WarnData.length >= 3) {
+                        Target.ban({ reason: `3rd warning reached! Final warning: \`${Reason}\`` }).catch(() => {
+                            errorEmbed.setDescription(`⛔ **${Target}** has reached 3 strikes, but I was unable to ban them! 🍂`);
+                            return guild.channels.cache.get(interaction.channelId).send({ embeds: [errorEmbed] })
+                        })
 
-                    db.findOne({ GuildID: interaction.guildId, UserID: Target.id, UserTag: Target.user.tag }, async(error, data) => {
-                        if (error) throw error;
-                        if (!data) {
-                            data = new db({
-                                GuildID: interaction.guildId,
-                                UserID: Target.id,
-                                UserTag: Target.user.tag,
-                                BanData: [{
+                        db.findOne({ GuildID: interaction.guildId, UserID: Target.id, UserTag: Target.user.tag }, async(error, data) => {
+                            if (error) throw error;
+                            if (!data) {
+                                data = new db({
+                                    GuildID: interaction.guildId,
+                                    UserID: Target.id,
+                                    UserTag: Target.user.tag,
+                                    BanData: [{
+                                        ExecutorID: interaction.user.id,
+                                        ExecutorTag: interaction.user.tag,
+                                        Reason: Reason,
+                                        Date: parseInt(interaction.createdTimestamp / 1000),
+                                    }]
+                                })
+                            } else {
+                                const banDataObject = {
                                     ExecutorID: interaction.user.id,
                                     ExecutorTag: interaction.user.tag,
                                     Reason: Reason,
                                     Date: parseInt(interaction.createdTimestamp / 1000),
-                                }]
-                            })
-                        } else {
-                            const banDataObject = {
-                                ExecutorID: interaction.user.id,
-                                ExecutorTag: interaction.user.tag,
-                                Reason: Reason,
-                                Date: parseInt(interaction.createdTimestamp / 1000),
+                                }
+                                data.BanData.push(banDataObject)
                             }
-                            data.push(banDataObject)
-                        }
-                        data.save()
-                    })
-
-                    logEmbed.setColor('#F18A8A')
-                    logEmbed.setAuthor({ name: `BAN | ${Target.user.tag}`, iconURL: interaction.guild.iconURL() })
-                    logEmbed.addFields({ name: 'User', value: `${Target}`, inline: true })
-                    logEmbed.addFields({ name: 'Moderator', value: interaction.user.tag, inline: true })
-                    logEmbed.addFields({ name: 'Reason', value: `3rd warning reached! Final warning: \`${Reason}\``, inline: true })
-                    guild.channels.cache.get(reportFilesChannel).send({ embeds: [logEmbed] })
-                    guild.channels.cache.get(logChannel).send({ embeds: [logEmbed] })
-                    Target.send({
-                        embeds: [new EmbedBuilder()
-                            .setColor('#f0c499')
-                            .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
-                            .setDescription(`❗You have been banned from ${guild.name}! \n**Reason**: 3 strikes auto-ban`)
+                            data.save()
+                        })
+                        strikeOutEmbed = new EmbedBuilder()
+                            .setColor('#F18A8A')
+                            .setAuthor({ name: `AUTOBAN | ${Target.user.tag}`, iconURL: interaction.guild.iconURL() })
+                            .addFields({ name: 'User', value: `${Target}`, inline: true })
+                            .addFields({ name: 'Moderator', value: interaction.user.tag, inline: true })
+                            .addFields({ name: 'Reason', value: `3rd warning reached!`, inline: true })
                             .setTimestamp()
                             .setFooter({ text: embedFooterText, iconURL: botLogo })
-                        ]
+                        guild.channels.cache.get(reportFilesChannel).send({ embeds: [strikeOutEmbed] })
+                        guild.channels.cache.get(logChannel).send({ embeds: [strikeOutEmbed] })
+                        Target.send({
+                            embeds: [new EmbedBuilder()
+                                .setColor('#f0c499')
+                                .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
+                                .setDescription(`❗You have been banned from ${guild.name}! \n**Reason**: 3 strikes auto-ban`)
+                                .setTimestamp()
+                                .setFooter({ text: embedFooterText, iconURL: botLogo })
+                            ]
 
-                    }).catch(() => {
-                        errorEmbed.setDescription(`⛔ I was unable to message **${Target}** about their 3-strikes ban! 🍂`);
-                        guild.channels.cache.get(interaction.channelId).send({ embeds: [errorEmbed] })
-                    })
+                        }).catch(() => {
+                            errorEmbed.setDescription(`⛔ I was unable to message **${Target}** about their 3-strikes ban! 🍂`);
+                            guild.channels.cache.get(interaction.channelId).send({ embeds: [errorEmbed] })
+                        })
+                    }
+                })
 
 
 
-                    Target.send({
-                        embeds: [new EmbedBuilder()
-                            .setColor('#f0c499')
-                            .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
-                            .setDescription(`❗You have been warned in ${guild.name}! \n**Reason**: \`${Reason}\``)
-                            .setTimestamp()
-                            .setFooter({ text: embedFooterText, iconURL: botLogo })
-                        ]
-                    }).catch(() => {
-                        errorEmbed.setDescription(`⛔ I was unable to message **${Target}** about their warning! 🍂`);
-                        guild.channels.cache.get(interaction.channelId).send({ embeds: [errorEmbed] })
-                    })
-                    interaction.reply({
-                        embeds: [new EmbedBuilder()
-                            .setColor('#f0c499')
-                            .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
-                            .setDescription(`✅ Warning added to ${Target.user.tag}!\n**Reason:** \`${Reason}\``)
-                            .setTimestamp()
-                            .setFooter({ text: embedFooterText + ` | ${Target.id}`, iconURL: botLogo })
-                        ]
-                    })
-                    logEmbed.setColor('#f0c499')
-                    logEmbed.setAuthor({ name: `WARN | ${Target.user.tag}`, iconURL: interaction.guild.iconURL() })
-                    guild.channels.cache.get(reportFilesChannel).send({ embeds: [logEmbed] })
-                    guild.channels.cache.get(logChannel).send({ embeds: [logEmbed] })
-                } else if (Sub === 'check') {
 
-                    db.findOne({ GuildID: interaction.guildId, UserID: Target.id, UserTag: Target.user.tag }, async(error, data) => {
-                                if (error) throw error;
-                                if (data) {
-                                    interaction.reply({
-                                                embeds: [new EmbedBuilder()
-                                                        .setTimestamp()
-                                                        .setFooter({ text: embedFooterText, iconURL: botLogo })
-                                                        .setColor('#f0c499')
-                                                        .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
-                                                        .setDescription(`${data.WarnData.map(
+                Target.send({
+                    embeds: [new EmbedBuilder()
+                        .setColor('#f0c499')
+                        .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
+                        .setDescription(`❗You have been warned in ${guild.name}! \n**Reason**: \`${Reason}\``)
+                        .setTimestamp()
+                        .setFooter({ text: embedFooterText, iconURL: botLogo })
+                    ]
+                }).catch(() => {
+                    errorEmbed.setDescription(`⛔ I was unable to message **${Target}** about their warning! 🍂`);
+                    guild.channels.cache.get(interaction.channelId).send({ embeds: [errorEmbed] })
+                })
+                interaction.reply({
+                    embeds: [new EmbedBuilder()
+                        .setColor('#f0c499')
+                        .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
+                        .setDescription(`✅ Warning added to ${Target.user.tag}!\n**Reason:** \`${Reason}\``)
+                        .setTimestamp()
+                        .setFooter({ text: embedFooterText + ` | ${Target.id}`, iconURL: botLogo })
+                    ]
+                })
+                logEmbed.setColor('#f0c499')
+                logEmbed.setAuthor({ name: `WARN | ${Target.user.tag}`, iconURL: interaction.guild.iconURL() })
+                guild.channels.cache.get(reportFilesChannel).send({ embeds: [logEmbed] })
+                guild.channels.cache.get(logChannel).send({ embeds: [logEmbed] })
+
+
+
+
+
+            } else if (Sub === 'check') {
+
+                db.findOne({ GuildID: interaction.guildId, UserID: Target.id, UserTag: Target.user.tag }, async(error, data) => {
+                            if (error) throw error;
+                            if (data) {
+                                interaction.reply({
+                                            embeds: [new EmbedBuilder()
+                                                    .setTimestamp()
+                                                    .setFooter({ text: embedFooterText, iconURL: botLogo })
+                                                    .setColor('#f0c499')
+                                                    .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
+                                                    .setDescription(`${data.WarnData.map(
                                         (w, i) => `**ID**: ${i + 1}\n**By**:${w.ExecutorTag}\n**Date**:${w.Date}\n**Reason**: ${w.Reason}\n\n`
                                     ).join(' ')}`)], ephemeral: true})} else {
                                         interaction.reply({
@@ -292,4 +301,3 @@ db.findOne({GuildID: interaction.guildId, UserID: Target.id, UserTag: Target.use
                 }
             }
         }
-    }
