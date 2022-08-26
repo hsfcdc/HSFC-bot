@@ -103,6 +103,33 @@ module.exports = {
                             .setFooter({ text: embedFooterText, iconURL: botLogo });
                         // Send vanityEmbed
                         interaction.reply({ embeds: [vanityEmbed] });
+                    }).catch(error => {
+                        interaction.guild.fetch()
+                            .then(data => {
+                                let serverCreatedAt = moment(interaction.guild.createdAt);
+                                let serverDateFormated = serverCreatedAt.format('DD/MM/YYYY') + ' (' + serverCreatedAt.fromNow() + ')';
+                                // vanityEmbed
+                                const nonVanityEmbed = new EmbedBuilder()
+                                    .setColor('#a4a3eb')
+                                    .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL() })
+                                    .setDescription(interaction.guild.description)
+                                    .setThumbnail(interaction.guild.iconURL())
+                                    .addFields({ name: 'Owner', value: `<@${interaction.guild.ownerId}>`, inline: true })
+                                    .addFields({ name: 'Creation', value: `${serverDateFormated}`, inline: true })
+                                    .addFields({
+                                        name: 'Vanity URL',
+                                        value: `Not Enabled.`,
+                                        inline: true
+                                    })
+                                    .addFields({ name: 'Members', value: `${interaction.guild.memberCount}`, inline: true })
+                                    .addFields({ name: 'Roles', value: `${interaction.guild.roles.cache.size}`, inline: true }, )
+                                    .addFields({ name: 'Channels', value: `${interaction.guild.channels.cache.size}`, inline: true })
+                                    .setImage(interaction.guild.bannerURL())
+                                    .setTimestamp()
+                                    .setFooter({ text: embedFooterText, iconURL: botLogo });
+                                // Send vanityEmbed
+                                interaction.reply({ embeds: [nonVanityEmbed] });
+                            })
                     })
             };
         }

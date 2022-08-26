@@ -12,7 +12,8 @@ global.botLogo = 'https://i.imgur.com/vqyKOkZ.png';
 global.embedFooterText = 'Heartbotter2 - discord.gg/heartstopper';
 
 // New client instance
-global.client = new Client({ intents: [GatewayIntentBits.Guilds] });
+global.client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages] });
+
 
 // Add commands
 client.commands = new Collection();
@@ -26,17 +27,20 @@ client.commands = new Collection();
 //     client.commands.set(command.data.name, command);
 // }
 
-const commandsPath = path.join(__dirname, 'commands');
+const commandsPath = path.join(__dirname, 'Commands');
 const commandFolders = fs.readdirSync(commandsPath);
 
 for (const folder of commandFolders) {
-    const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
+    const commandFiles = fs.readdirSync(`./Commands/${folder}`).filter(file => file.endsWith('.js'));
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, folder, file);
         const command = require(filePath);
         client.commands.set(command.data.name, command);
     }
 }
+['events'].forEach(handler => {
+    require(`./Handlers/${handler}`)(client);
+});
 
 
 
@@ -59,7 +63,9 @@ client.once('ready', async() => {
     });
 
 });
-
+client.on("guildMemberAdd", (member) => {
+    console.log(`Someone joined the server`);
+});
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
     const command = client.commands.get(interaction.commandName);
