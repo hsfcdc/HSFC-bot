@@ -6,6 +6,7 @@ const { templateEmbedResponse } = require("../../Import/embedTemplate.js")
 
 module.exports = {
     data: new SlashCommandBuilder()
+        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
         .setDMPermission(false)
         .setName('tag')
         .setDescription('Quickly create or send custom messages.')
