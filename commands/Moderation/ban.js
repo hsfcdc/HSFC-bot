@@ -44,6 +44,12 @@ module.exports = {
             .setTimestamp()
             .setFooter({ text: embedFooterText, iconURL: botLogo });
 
+        const errorEmbed = new EmbedBuilder()
+            .setColor('#f0c499')
+            .setAuthor({ name: 'ERROR!', iconURL: interaction.guild.iconURL() })
+            .setTimestamp()
+            .setFooter({ text: embedFooterText, iconURL: botLogo });
+
 
         if (Target.id === member.id) {
             banEmbed.setDescription("⛔ You cannot ban yourself! 🍂")
@@ -60,7 +66,10 @@ module.exports = {
 
         }
 
-        Target.send({ embeds: [dmEmbed] })
+        Target.send({ embeds: [dmEmbed] }).catch(() => {
+            errorEmbed.setDescription(`⛔ I was unable to message **${Target}** about their warning! 🍂`);
+            guild.channels.cache.get(interaction.channelId).send({ embeds: [errorEmbed] })
+        })
         banEmbed.setDescription(`${Target} has been banned for: \`${Reason}\`🍂`)
         await interaction.reply({ embeds: [banEmbed] })
 

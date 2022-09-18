@@ -70,7 +70,7 @@ module.exports = {
 
             const errorEmbed = new EmbedBuilder()
                 .setColor('#f0c499')
-                .setAuthor({ name: 'WARN', iconURL: interaction.guild.iconURL() })
+                .setAuthor({ name: 'ERROR!', iconURL: interaction.guild.iconURL() })
                 .setTimestamp()
                 .setFooter({ text: embedFooterText, iconURL: botLogo });
 
